@@ -1,0 +1,26 @@
+# TOP-LEVEL CONFIG Script TO BOOT ZEPHYR.
+local $board_name = "system.board.fpga"
+
+# Ensure the nand_mem.img & bl2.bin paths are relative to the simics executable
+
+# First stage boot loader, ATF BL2 path
+$fsbl_image_filename = bl2.bin
+
+#Boot from QSPI
+$qspi_image_filename = flash_image_jic.rpd
+
+# Enable Console
+# $create_hps_serial0_console=TRUE
+
+# Enable TCP Console
+$create_hps_console0_console = TRUE
+$hps_console0_port = 1234
+
+# Load the board model (no console vars — we set it manually below)
+run-command-file "../targets/agilex5e-universal/agilex5e-universal.simics"
+
+# Bind UART console to TCP port 1234
+system.board.fpga.soc_inst.hps_subsys.agilex_hps.console0.con.tcp->port = 1234
+
+# Start execution
+run
