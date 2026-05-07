@@ -49,7 +49,8 @@ fi
 make -C "$REPO_DIR" fiptool
 cp $REPO_DIR/tools/fiptool/fiptool $TOP_FOLDER/.
 
-rm -rf zephyr.bin
+rm -rf zephyr.bin zephyr.elf
+cp $ZEPHYR_BIN/build/zephyr/zephyr.elf .
 cp $ZEPHYR_BIN/build/zephyr/zephyr.bin .
 cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl2.bin .
 cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl31.bin .
@@ -122,13 +123,13 @@ else
     echo "Skipping quartus_pfg"
 fi
 
-pkill -9 simics
-pkill -9 tmux
+pkill -9 -f simics
+pkill -9 -f telnet
+pkill -9 -f tmux
+
+# ../simics ./zephyr_qspi.simics
 
 tmux new-session -d -s simics_session "../simics ./zephyr_qspi.simics"
-
-# Wait for port
 until nc -z localhost 1234; do sleep 1; done
-
 tmux split-window -h "telnet localhost 1234"
 tmux attach -t simics_session
