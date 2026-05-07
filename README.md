@@ -14,6 +14,8 @@ Install the required system packages before proceeding with any other steps:
 sudo apt update && sudo apt install -y \
     telnet \
     tmux \
+    libgtk2.0-dev \
+    libgtk-3-dev \
     gcc-aarch64-linux-gnu \
     binutils-aarch64-linux-gnu
 ```
