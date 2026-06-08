@@ -36,12 +36,11 @@ REPO_DIR="$TOP_FOLDER/arm-trusted-firmware-qspi"
 if [ ! -d "$REPO_DIR" ]; then
     echo "Cloning repository..."
     git clone -b QPDS24.3_REL_GSRD_PR \
-        https://github.com/altera-opensource/arm-trusted-firmware \
-        "$REPO_DIR"
+        https://github.com/altera-opensource/arm-trusted-firmware arm-trusted-firmware-qspi
     git -C "$REPO_DIR" switch -c test 2>/dev/null || git -C "$REPO_DIR" switch test
     make -C "$REPO_DIR" realclean
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
-    make -C "$REPO_DIR" PLAT=agilex5 SOCFPGA_BOOT_SOURCE_QSPI=1 bl2 bl31 PRELOADED_BL33_BASE=0x80100000 -j$(nproc)
+    make -C "$REPO_DIR" PLAT=agilex5 SOCFPGA_BOOT_SOURCE_QSPI=1 DEBUG=1 bl2 bl31 PRELOADED_BL33_BASE=0x80100000 -j$(nproc)
 else
     echo "Repository already exists. Skipping clone and ATF build."
 fi
@@ -52,10 +51,10 @@ cp $REPO_DIR/tools/fiptool/fiptool $TOP_FOLDER/.
 rm -rf zephyr.bin zephyr.elf
 cp $ZEPHYR_BIN/build/zephyr/zephyr.bin .
 cp $ZEPHYR_BIN/build/zephyr/zephyr.elf .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl2.bin .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl31.bin .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl2.elf .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl31.elf .
+cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl2.bin .
+cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl31.bin .
+cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl2/bl2.elf .
+cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl31/bl31.elf .
 
 aarch64-linux-gnu-objcopy -v -I binary -O ihex --change-addresses 0x00000000 bl2.bin bl2.hex
 
@@ -129,9 +128,9 @@ pkill -9 -f simics
 pkill -9 -f telnet
 pkill -9 -f tmux
 
-# ../simics ./zephyr_qspi.simics
+../simics ./zephyr_qspi.simics
 
-tmux new-session -d -s simics_session "../simics ./zephyr_qspi.simics"
-until nc -z localhost 1234; do sleep 1; done
-tmux split-window -h "telnet localhost 1234"
-tmux attach -t simics_session
+# tmux new-session -d -s simics_session "../simics ./zephyr_qspi.simics"
+# until nc -z localhost 1234; do sleep 1; done
+# tmux split-window -h "telnet localhost 1234"
+# tmux attach -t simics_session
