@@ -50,10 +50,12 @@ make -C "$REPO_DIR" fiptool
 cp $REPO_DIR/tools/fiptool/fiptool $TOP_FOLDER/.
 
 rm -rf zephyr.bin zephyr.elf
-cp $ZEPHYR_BIN/build/zephyr/zephyr.elf .
 cp $ZEPHYR_BIN/build/zephyr/zephyr.bin .
+cp $ZEPHYR_BIN/build/zephyr/zephyr.elf .
 cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl2.bin .
 cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl31.bin .
+cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl2.elf .
+cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/release/bl31.elf .
 
 aarch64-linux-gnu-objcopy -v -I binary -O ihex --change-addresses 0x00000000 bl2.bin bl2.hex
 
