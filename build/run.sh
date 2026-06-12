@@ -36,7 +36,7 @@ REPO_DIR="$TOP_FOLDER/arm-trusted-firmware-qspi"
 if [ ! -d "$REPO_DIR" ]; then
     echo "Cloning repository..."
     git clone -b QPDS24.3_REL_GSRD_PR \
-        https://github.com/altera-opensource/arm-trusted-firmware arm-trusted-firmware-qspi
+        https://github.com/altera-opensource/arm-trusted-firmware "$REPO_DIR"
     git -C "$REPO_DIR" switch -c test 2>/dev/null || git -C "$REPO_DIR" switch test
     make -C "$REPO_DIR" realclean
     ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
