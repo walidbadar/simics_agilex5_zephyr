@@ -40,7 +40,7 @@ if [ ! -d "$REPO_DIR" ]; then
     git -C "$REPO_DIR" switch -c test 2>/dev/null || git -C "$REPO_DIR" switch test
     make -C "$REPO_DIR" realclean
 else
-    echo "Repository already exists. Skipping clone and ATF build."
+    echo "Repository already exists. Skipping ATF clonning."
 fi
 
 if [ "$1" = "-b" ] || [ "$1" = "--build" ]; then
