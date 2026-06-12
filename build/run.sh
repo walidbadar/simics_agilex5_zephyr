@@ -39,11 +39,12 @@ if [ ! -d "$REPO_DIR" ]; then
         https://github.com/altera-opensource/arm-trusted-firmware "$REPO_DIR"
     git -C "$REPO_DIR" switch -c test 2>/dev/null || git -C "$REPO_DIR" switch test
     make -C "$REPO_DIR" realclean
-    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
-    make -C "$REPO_DIR" PLAT=agilex5 SOCFPGA_BOOT_SOURCE_QSPI=1 DEBUG=1 bl2 bl31 PRELOADED_BL33_BASE=0x80100000 -j$(nproc)
 else
     echo "Repository already exists. Skipping clone and ATF build."
 fi
+
+ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+make -C "$REPO_DIR" PLAT=agilex5 SOCFPGA_BOOT_SOURCE_QSPI=1 DEBUG=1 bl2 bl31 PRELOADED_BL33_BASE=0x80100000 -j$(nproc)
 
 make -C "$REPO_DIR" fiptool
 cp $REPO_DIR/tools/fiptool/fiptool $TOP_FOLDER/.
