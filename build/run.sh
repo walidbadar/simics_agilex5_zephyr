@@ -43,8 +43,13 @@ else
     echo "Repository already exists. Skipping clone and ATF build."
 fi
 
-ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
-make -C "$REPO_DIR" PLAT=agilex5 SOCFPGA_BOOT_SOURCE_QSPI=1 DEBUG=1 bl2 bl31 PRELOADED_BL33_BASE=0x80100000 -j$(nproc)
+if [ "$1" = "-b" ] || [ "$1" = "--build" ]; then
+    ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- \
+    echo "Building ATF binary using $CROSS_COMPILE..."
+    make -C "$REPO_DIR" PLAT=agilex5 SOCFPGA_BOOT_SOURCE_QSPI=1 DEBUG=1 bl2 bl31 PRELOADED_BL33_BASE=0x80100000 -j$(nproc)
+else
+    echo "Skipping ATF build"
+fi
 
 make -C "$REPO_DIR" fiptool
 cp $REPO_DIR/tools/fiptool/fiptool $TOP_FOLDER/.
@@ -126,12 +131,5 @@ else
 fi
 
 pkill -9 -f simics
-pkill -9 -f telnet
-pkill -9 -f tmux
 
 ../simics ./zephyr_qspi.simics
-
-# tmux new-session -d -s simics_session "../simics ./zephyr_qspi.simics"
-# until nc -z localhost 1234; do sleep 1; done
-# tmux split-window -h "telnet localhost 1234"
-# tmux attach -t simics_session
