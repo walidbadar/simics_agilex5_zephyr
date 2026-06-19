@@ -30,7 +30,7 @@ if [[ "$1" == "-d" || "$1" == "--deploy" ]]; then
 fi
 
 TOP_FOLDER=$PWD/..
-REPO_DIR="$TOP_FOLDER/arm-trusted-firmware-qspi"
+REPO_DIR="$REPO_DIR"
 
 # Clone only if not present
 if [ ! -d "$REPO_DIR" ]; then
@@ -57,10 +57,10 @@ cp $REPO_DIR/tools/fiptool/fiptool $TOP_FOLDER/.
 rm -rf zephyr.bin zephyr.elf
 cp $ZEPHYR_BIN/build/zephyr/zephyr.bin .
 cp $ZEPHYR_BIN/build/zephyr/zephyr.elf .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl2.bin .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl31.bin .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl2/bl2.elf .
-cp $TOP_FOLDER/arm-trusted-firmware-qspi/build/agilex5/debug/bl31/bl31.elf .
+cp $REPO_DIR/build/agilex5/debug/bl2.bin .
+cp $REPO_DIR/build/agilex5/debug/bl31.bin .
+cp $REPO_DIR/build/agilex5/debug/bl2/bl2.elf .
+cp $REPO_DIR/build/agilex5/debug/bl31/bl31.elf .
 
 aarch64-linux-gnu-objcopy -v -I binary -O ihex --change-addresses 0x00000000 bl2.bin bl2.hex
 
@@ -72,9 +72,20 @@ TMP="ghrd_a5ed065bb32ae6sr0_hps.sof"
 
 if [ ! -f "$FILE" ]; then
     echo "File not found. Downloading..."
-    rm -f "$TMP"
     wget "$URL"
     mv "$TMP" "$FILE"
+else
+    echo "File already exists. Skipping download."
+fi
+
+DBG_FILE="qspi_hps_debug.sof"
+DBG_URL="https://releases.rocketboards.org/2024.11/gsrd/agilex5_dk_a5e065bb32aes1_gsrd/ghrd_a5ed065bb32ae6sr0_hps_debug.sof"
+DBG_TMP="ghrd_a5ed065bb32ae6sr0_hps_debug.sof"
+
+if [ ! -f "$DBG_FILE" ]; then
+    echo "File not found. Downloading..."
+    wget "$DBG_URL"
+    mv "$DBG_TMP" "$DBG_FILE"
 else
     echo "File already exists. Skipping download."
 fi
